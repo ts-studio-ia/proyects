@@ -19,10 +19,9 @@ export const selectActiveNode = (state: AppState) => state.repoSlice.nodes.find(
 
 export const selectNodeDependencies = (state: AppState, nodeId: string) => {
   const node = state.repoSlice.nodes.find((currentNode) => currentNode.id === nodeId);
-  if (!node) {
-    return [];
-  }
-  return node.dependencies
-    .map((dependencyId) => state.repoSlice.nodes.find((candidate) => candidate.id === dependencyId))
-    .filter((candidate) => candidate !== undefined);
+  if (!node) return [];
+  return node.dependencies.map((dependencyId) => state.repoSlice.nodes.find((candidate) => candidate.id === dependencyId)).filter((candidate) => candidate !== undefined);
 };
+
+export const selectTraceTimelineForNode = (state: AppState, nodeId: string) =>
+  state.traceSlice.events.filter((event) => event.nodeId === nodeId).sort((a, b) => a.timestamp.localeCompare(b.timestamp));

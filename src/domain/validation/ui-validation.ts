@@ -1,5 +1,6 @@
 import { selectActiveNode, selectVisibleNodes } from "../../app/selectors.js";
 import { storeActions, type AppState } from "../../app/store.js";
+import type { RuleCandidate } from "../governance/types.js";
 import type { TraceEvent } from "../trace/types.js";
 
 export type CanvasValidationResult = {
@@ -32,17 +33,16 @@ export const validateCanvasUI = (state: AppState): { state: AppState; result: Ca
 
   if (diagnostics.length > 0) {
     currentState = storeActions.publishTrace(currentState, createEvent("ui_validation_failed", diagnostics.join(" | ")));
+    const candidate: RuleCandidate = activeNode
+      ? { id: `rule-${Date.now()}`, scope: "node", nodeId: activeNode.id, summary: diagnostics.join(" | "), createdFrom: "ui_validation_failed" }
+      : { id: `rule-${Date.now()}`, scope: "global", summary: diagnostics.join(" | "), createdFrom: "ui_validation_failed" };
+    currentState = storeActions.addRuleCandidate(currentState, candidate);
     return {
       state: {
         ...currentState,
-        uiValidationSlice: {
-          ...currentState.uiValidationSlice,
-          isValid: false,
-          retryCount: currentState.uiValidationSlice.retryCount + 1,
-          lastDiagnostic: diagnostics.join(" | ")
-        }
+        uiValidationSlice: { ...currentState.uiValidationSlice, isValid: false, retryCount: currentState.uiValidationSlice.retryCount + 1, lastDiagnostic: diagnostics.join(" | ") }
       },
-      result: { ok: false, diagnostics, ruleCandidate: "Crear regla de layout/trace para nodos sin metadata visible" }
+      result: { ok: false, diagnostics, ruleCandidate: candidate.id }
     };
   }
 
