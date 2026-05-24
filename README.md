@@ -1,43 +1,132 @@
-# TST Autonomous / repo-navigator-canvas
+# TST Autonomous — repo-navigator-canvas
 
-## Plan por fases
+**Operating System for Governed Autonomous Engineering**
 
-### Fase 1: Arquitectura base (prioridad absoluta)
-1. Definir estructura de carpetas modular en `src/`.
-2. Crear tipos de dominio estrictos (sin `any`) para nodos, trazas, validaciones, gobernanza y state machine.
-3. Implementar store con Zustand por slices (`repo`, `graph`, `editor`, `agent`, `trace`, `governance`, `uiValidation`).
-4. Implementar selectores puros.
+> Humano gobierna. Policy decide. Constitución limita. Trace registra. Rollback protege.
 
-### Fase 2: Navegación operacional del repo
-1. Construir canvas navegable (pan/zoom, búsqueda, selección, filtros por capa).
-2. Habilitar navegación por dependencias.
-3. Mostrar nodos operacionales con metadata (risk/confidence/cost, estado, validaciones, trace-events).
+---
 
-### Fase 3: Node editor dual-tab
-1. Tab `CÓDIGO (Editor principal)` con preview, lenguaje y numeración de líneas.
-2. Tab `Descripción y Registro` con descripción, responsabilidades, dependencias, notas de arquitectura, trazas y changelog.
-3. Header con path real, lenguaje y tipo de artefacto.
+## Estado actual (verificado 2026-05-24)
 
-### Fase 4: Trace Spine + command pipeline
-1. Implementar Trace Event Bus tipado y obligatorio para acciones.
-2. Implementar pipeline de comandos de agente con `validate`, `preview`, `expectedTraceEvents`, `apply`, `rollbackPlan`, `requiredApprovalLevel`.
-3. Garantizar transiciones de estado válidas por state machine.
+| Capa | Estado |
+|---|---|
+| Domain types + store + selectors | Implementado |
+| Governance stubs (10 módulos) | Implementado con lógica real |
+| Command pipeline gobernado | Implementado |
+| Policy Runtime | Implementado |
+| Constitutional Runtime (6 invariantes) | Implementado |
+| Unified Runtime Kernel | Implementado |
+| Event Sourcing / Ledger | Implementado |
+| Knowledge Graph | Implementado |
+| MCP Fabric | Implementado |
+| Controlled Apply | Implementado |
+| Reality Bridge | Implementado |
+| Operator Experience | Implementado |
+| Stack Definition | Implementado |
+| External Integration (12 providers, todos disabled) | Implementado |
+| **Backend NestJS** | **No existe** |
+| **PostgreSQL + Drizzle** | **No existe** |
+| **UI React real** | **No existe** |
+| **CI/CD** | **No existe** |
+| **Auth** | **No existe** |
 
-### Fase 5: AI Interface Validation Loop
-1. Implementar validación de UI previa a aprobación humana.
-2. Emitir `ui_validation_failed` ante fallas y aplicar retry budget.
-3. Escalar cuando se excede el presupuesto.
+Ver [docs/REALITY_AUDIT.md](docs/REALITY_AUDIT.md) para análisis completo.
 
-### Fase 6: Tests + documentación de extensión
-1. Unit tests para selectores, comandos, transiciones y trace bus.
-2. Documentar extensión: nuevos nodos, capas, acciones, trace-events e integración futura con API/repo real.
+---
 
-## Prioridad absoluta
-Primero arquitectura, estado, tipos y navegación real del repo.
-Segundo editor de nodo con Código / Descripción y Registro.
-Tercero Trace Spine y validación.
-Cuarto estética HUD.
+## Estructura
 
-No sacrificar gobernanza por visuales.
-No sacrificar trazabilidad por velocidad.
-No sacrificar producto por demo.
+```
+src/
+├── app/                          # Store (7 slices) + selectors
+├── domain/
+│   ├── repo/                     # RepoNode types
+│   ├── trace/                    # TraceEvent bus (65 event types)
+│   ├── governance/               # State machine + 10 módulos reales
+│   ├── agent/                    # Governed command pipeline
+│   ├── graph/                    # Canvas controller
+│   ├── validation/               # UI validation
+│   ├── policy-runtime/           # Policy evaluation (deny-by-default)
+│   ├── constitutional-runtime/   # Constitutional invariants
+│   ├── event-sourcing/           # Append-only ledger + hash chain
+│   ├── knowledge-graph/          # Sovereign knowledge graph
+│   ├── mcp-fabric/               # MCP tool registry + invocations
+│   ├── controlled-apply/         # Apply sessions + receipts
+│   ├── reality-bridge/           # Execution permits + boundaries
+│   ├── stack-definition/         # Canonical stack definition
+│   ├── operator-experience/      # Health + operator summaries
+│   ├── unified-runtime-kernel/   # Unified governed pipeline
+│   └── external-integration/     # 12 providers (all disabled by default)
+│       └── providers/
+│           ├── github.ts
+│           ├── local-fs.ts
+│           ├── docker.ts
+│           ├── kubernetes.ts
+│           ├── vercel.ts
+│           ├── vault.ts
+│           ├── terraform.ts
+│           ├── tailscale.ts
+│           ├── kyverno.ts
+│           ├── milvus.ts
+│           ├── drizzle.ts
+│           └── mcp.ts
+├── components/
+│   ├── canvas/                   # RepoCanvas (texto)
+│   └── editor/                   # NodeEditor (texto)
+└── tests/
+    └── core.test.ts              # 31 tests
+```
+
+---
+
+## Stack canónico
+
+| Capa | Tecnología | Estado |
+|---|---|---|
+| Frontend | React + TypeScript + Vite + Zustand | Parcial (tipos, sin UI real) |
+| Backend | NestJS + TypeScript | Pendiente |
+| Agent Runtime | Python FastAPI + LangGraph + Pydantic | Pendiente |
+| Orchestration | Temporal.io | Pendiente |
+| Queue | Redis/BullMQ | Pendiente |
+| Database | PostgreSQL + **Drizzle ORM** (Prisma prohibido) | Pendiente |
+| Vector DB | **Milvus** (Qdrant prohibido) | Pendiente |
+| Secrets | **HashiCorp Vault** (production) | Pendiente |
+| IaC | Terraform plan-first | Pendiente |
+| K8s Policy | Kyverno | Pendiente |
+| Private Mesh | Tailscale | Pendiente |
+| Observability | Grafana + Loki + Prometheus + Tempo + OTel | Pendiente |
+
+---
+
+## Comandos
+
+```bash
+npm run lint    # TypeScript check
+npm run build   # Compile to dist/
+npm test        # Run 31 tests (node --test)
+```
+
+---
+
+## Docs
+
+- [docs/REALITY_AUDIT.md](docs/REALITY_AUDIT.md) — Estado real vs documentado
+- [docs/UNIFIED_RUNTIME_KERNEL.md](docs/UNIFIED_RUNTIME_KERNEL.md) — Unified pipeline
+
+---
+
+## Invariantes
+
+```
+Sin tenantId/projectId → bloqueado
+Sin policy decision → deny-by-default
+Constitutional violation → pipeline bloqueado
+Mutación sin approval → bloqueado
+Secrets por valor → bloqueado
+Providers externos → disabled by default
+Terraform apply sin approval/policy/constitution/rollback → bloqueado
+Kyverno no activo → production deployment bloqueado
+Tailscale no activo → private access bloqueado
+Prisma → prohibido
+Qdrant → prohibido
+```

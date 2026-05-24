@@ -8,8 +8,10 @@
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
-  "devDependencies": {
-    "typescript": "^5.6.3",
+  "dependencies": {
     "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   }
 }
