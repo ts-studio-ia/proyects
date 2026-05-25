@@ -1,0 +1,9 @@
+export type RealityExecutionScope = { allowedPaths: string[]; protectedRoots: string[]; allowedCommands: string[]; allowedDomains: string[]; allowedMcpCapabilities: string[]; maxBlastRadius: number };
+export type RealityExecutionBoundary = { timeoutMs: number; maxMemoryMb: number; dryRun: boolean; sandboxRoot: string };
+export type RealityExecutionPermit = { id: string; approvalPackageId: string; humanApprovalState: "pending" | "approved" | "rejected"; governanceSignature: string; riskScore: number; expectedTraceEvents: string[] };
+export type RealityExecutionDiff = { target: string; before: string; after: string; summary: string };
+export type RealityRollbackPlan = { id: string; checkpointId: string; steps: string[]; confidence: number };
+export type RealitySnapshot = { id: string; at: string; files: Record<string, string> };
+export type RealityExecutionReceipt = { id: string; action: string; success: boolean; blockedReason?: string; replayMetadata: string; rollbackMetadata: string };
+export type RealityExecutionSession = { id: string; scope: RealityExecutionScope; boundary: RealityExecutionBoundary; permit: RealityExecutionPermit; receipts: RealityExecutionReceipt[]; governanceLock: boolean; emergencyStop: boolean };
+export type RealityBridge = { session: RealityExecutionSession; snapshots: RealitySnapshot[] };
